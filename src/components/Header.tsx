@@ -25,8 +25,7 @@ const buttonStyle = {
   padding: "10px 20px",
   borderRadius: "5px",
   fontSize: "1rem",
-  textTransform: "uppercase",
+  textTransform: "uppercase" as const,
   transition: "all 0.3s ease",
   border: "none",
 };
-

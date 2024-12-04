@@ -6,19 +6,38 @@ export default function Home() {
       <header style={{ textAlign: "center", marginBottom: "20px" }}>
         <h1 style={{ fontSize: "2rem", color: "#4CAF50" }}>Banking App</h1>
       </header>
-      <nav style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "15px" }}>
-        <Link href="/deposit" style={linkStyle}>Deposit</Link>
-        <Link href="/withdraw" style={linkStyle}>Withdraw</Link>
-        <Link href="/transfer" style={linkStyle}>Transfer</Link>
-        <Link href="/statement" style={linkStyle}>Account Statement</Link>
-        <Link href="/create-account" style={linkStyle}>Create New Account</Link>
-	 <Link href="/accounts" style={linkStyle}>All Accounts</Link> {/* New Link */}
+      <nav
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "15px",
+        }}
+      >
+        <Link href="/deposit" style={linkStyle}>
+          Deposit
+        </Link>
+        <Link href="/withdraw" style={linkStyle}>
+          Withdraw
+        </Link>
+        <Link href="/transfer" style={linkStyle}>
+          Transfer
+        </Link>
+        <Link href="/statement" style={linkStyle}>
+          Account Statement
+        </Link>
+        <Link href="/create-account" style={linkStyle}>
+          Create New Account
+        </Link>
+        <Link href="/accounts" style={linkStyle}>
+          All Accounts
+        </Link>
       </nav>
     </div>
   );
 }
 
-const linkStyle = {
+const linkStyle: React.CSSProperties = {
   textDecoration: "none",
   fontSize: "1.2rem",
   color: "#4CAF50",
@@ -31,4 +50,3 @@ const linkStyle = {
   textTransform: "uppercase",
   transition: "all 0.3s ease",
 };
-

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios"; // Importing AxiosError type
 import Header from "../components/Header";
 
 interface Account {
@@ -15,10 +15,18 @@ export default function Accounts() {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/accounts");
+        const response = await axios.get(
+          "https://code-sherpas-484b9f1e5fb8.herokuapp.com/accounts"
+        );
         setAccounts(response.data);
-      } catch (error: any) {
-        setMessage(error.response?.data.message || "Error fetching accounts.");
+      } catch (error: unknown) {
+        if (error instanceof AxiosError) {
+          setMessage(
+            error.response?.data.message || "Error fetching accounts."
+          );
+        } else {
+          setMessage("An unexpected error occurred.");
+        }
       }
     };
     fetchAccounts();
@@ -43,21 +51,34 @@ export default function Accounts() {
               <tr key={index}>
                 <td style={tdStyle}>{account.iban}</td>
                 <td style={tdStyle}>${account.balance}</td>
-                <td style={tdStyle}>{new Date(account.createdAt).toLocaleDateString()}</td>
+                <td style={tdStyle}>
+                  {new Date(account.createdAt).toLocaleDateString()}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        <p style={{ color: "#4CAF50", marginTop: "20px" }}>No accounts found.</p>
+        <p style={{ color: "#4CAF50", marginTop: "20px" }}>
+          No accounts found.
+        </p>
       )}
     </div>
   );
 }
 
-const pageStyle = { fontFamily: "Arial, sans-serif", padding: "20px", textAlign: "center" };
+const pageStyle = {
+  fontFamily: "Arial, sans-serif",
+  padding: "20px",
+  textAlign: "center" as const,
+};
+
 const titleStyle = { color: "#4CAF50", marginBottom: "20px" };
-const tableStyle = { marginTop: "20px", width: "100%", borderCollapse: "collapse" };
+const tableStyle = {
+  marginTop: "20px",
+  width: "100%",
+  borderCollapse: "collapse" as const,
+};
 const thStyle = {
   border: "1px solid #ddd",
   padding: "10px",
@@ -65,4 +86,3 @@ const thStyle = {
   fontWeight: "bold",
 };
 const tdStyle = { border: "1px solid #ddd", padding: "10px" };
-

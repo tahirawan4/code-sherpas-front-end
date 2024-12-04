@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios"; // Importing AxiosError type
 import Header from "../components/Header";
 
 export default function Deposit() {
@@ -9,10 +9,20 @@ export default function Deposit() {
 
   const handleDeposit = async () => {
     try {
-      const response = await axios.post("http://localhost:3001/deposit", { iban, amount });
+      const response = await axios.post(
+        "https://code-sherpas-484b9f1e5fb8.herokuapp.com/deposit",
+        {
+          iban,
+          amount,
+        }
+      );
       setMessage(`Deposit successful! New balance: $${response.data.balance}`);
-    } catch (error: any) {
-      setMessage(error.response?.data.message || "Error making deposit.");
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        setMessage(error.response?.data.message || "Error making deposit.");
+      } else {
+        setMessage("An unexpected error occurred.");
+      }
     }
   };
 
@@ -31,18 +41,26 @@ export default function Deposit() {
         type="number"
         placeholder="Amount"
         value={amount}
-        onChange={(e) => setAmount(e.target.value ? parseFloat(e.target.value) : "")}
+        onChange={(e) =>
+          setAmount(e.target.value ? parseFloat(e.target.value) : "")
+        }
         style={inputStyle}
       />
       <button onClick={handleDeposit} style={buttonStyle}>
         Deposit
       </button>
-      {message && <p style={{ color: "#4CAF50", marginTop: "20px" }}>{message}</p>}
+      {message && (
+        <p style={{ color: "#4CAF50", marginTop: "20px" }}>{message}</p>
+      )}
     </div>
   );
 }
 
-const pageStyle = { fontFamily: "Arial, sans-serif", padding: "20px", textAlign: "center" };
+const pageStyle = {
+  fontFamily: "Arial, sans-serif",
+  padding: "20px",
+  textAlign: "center" as const,
+};
 const titleStyle = { color: "#4CAF50", marginBottom: "20px" };
 const inputStyle = {
   padding: "10px",
@@ -59,4 +77,3 @@ const buttonStyle = {
   borderRadius: "5px",
   cursor: "pointer",
 };
-

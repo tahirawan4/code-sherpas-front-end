@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios"; // Importing AxiosError type
 import Header from "../components/Header";
 
 export default function CreateAccount() {
@@ -9,13 +9,20 @@ export default function CreateAccount() {
 
   const handleCreateAccount = async () => {
     try {
-      const response = await axios.post("http://localhost:3001/create-account", {
-        initialBalance: initialBalance || 0,
-      });
+      const response = await axios.post(
+        "https://code-sherpas-484b9f1e5fb8.herokuapp.com/create-account",
+        {
+          initialBalance: initialBalance || 0,
+        }
+      );
       setIban(response.data.iban);
       setMessage("Account created successfully!");
-    } catch (error: any) {
-      setMessage(error.response?.data.message || "Error creating account.");
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        setMessage(error.response?.data.message || "Error creating account.");
+      } else {
+        setMessage("An unexpected error occurred.");
+      }
     }
   };
 
@@ -27,7 +34,9 @@ export default function CreateAccount() {
         type="number"
         placeholder="Initial Balance"
         value={initialBalance}
-        onChange={(e) => setInitialBalance(e.target.value ? parseFloat(e.target.value) : "")}
+        onChange={(e) =>
+          setInitialBalance(e.target.value ? parseFloat(e.target.value) : "")
+        }
         style={inputStyle}
       />
       <button onClick={handleCreateAccount} style={buttonStyle}>
@@ -38,12 +47,18 @@ export default function CreateAccount() {
           Account created successfully! IBAN: <strong>{iban}</strong>
         </p>
       )}
-      {message && !iban && <p style={{ color: "red", marginTop: "20px" }}>{message}</p>}
+      {message && !iban && (
+        <p style={{ color: "red", marginTop: "20px" }}>{message}</p>
+      )}
     </div>
   );
 }
 
-const pageStyle = { fontFamily: "Arial, sans-serif", padding: "20px", textAlign: "center" };
+const pageStyle = {
+  fontFamily: "Arial, sans-serif",
+  padding: "20px",
+  textAlign: "center" as const, 
+};
 const titleStyle = { color: "#4CAF50", marginBottom: "20px" };
 const inputStyle = {
   padding: "10px",
@@ -61,4 +76,3 @@ const buttonStyle = {
   cursor: "pointer",
   marginTop: "10px",
 };
-

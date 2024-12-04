@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios"; // Import AxiosError type
 import Header from "../components/Header";
 
 export default function Transfer() {
@@ -10,10 +10,21 @@ export default function Transfer() {
 
   const handleTransfer = async () => {
     try {
-      const response = await axios.post("http://localhost:3001/transfer", { fromIban, toIban, amount });
+      await axios.post(
+        "https://code-sherpas-484b9f1e5fb8.herokuapp.com/transfer",
+        {
+          fromIban,
+          toIban,
+          amount,
+        }
+      );
       setMessage("Transfer successful!");
-    } catch (error: any) {
-      setMessage(error.response?.data.message || "Error making transfer.");
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        setMessage(error.response?.data.message || "Error making transfer.");
+      } else {
+        setMessage("An unexpected error occurred.");
+      }
     }
   };
 
@@ -39,27 +50,41 @@ export default function Transfer() {
         type="number"
         placeholder="Amount"
         value={amount}
-        onChange={(e) => setAmount(e.target.value ? parseFloat(e.target.value) : "")}
+        onChange={(e) =>
+          setAmount(e.target.value ? parseFloat(e.target.value) : "")
+        }
         style={inputStyle}
       />
       <button onClick={handleTransfer} style={buttonStyle}>
         Transfer
       </button>
-      {message && <p style={{ color: "#4CAF50", marginTop: "20px" }}>{message}</p>}
+      {message && (
+        <p style={{ color: "#4CAF50", marginTop: "20px" }}>{message}</p>
+      )}
     </div>
   );
 }
 
-const pageStyle = { fontFamily: "Arial, sans-serif", padding: "20px", textAlign: "center" };
-const titleStyle = { color: "#4CAF50", marginBottom: "20px" };
-const inputStyle = {
+const pageStyle: React.CSSProperties = {
+  fontFamily: "Arial, sans-serif",
+  padding: "20px",
+  textAlign: "center",
+};
+
+const titleStyle: React.CSSProperties = {
+  color: "#4CAF50",
+  marginBottom: "20px",
+};
+
+const inputStyle: React.CSSProperties = {
   padding: "10px",
   margin: "10px 0",
   border: "1px solid #ccc",
   borderRadius: "5px",
   width: "80%",
 };
-const buttonStyle = {
+
+const buttonStyle: React.CSSProperties = {
   padding: "10px 20px",
   backgroundColor: "#4CAF50",
   color: "#fff",
@@ -67,4 +92,3 @@ const buttonStyle = {
   borderRadius: "5px",
   cursor: "pointer",
 };
-
